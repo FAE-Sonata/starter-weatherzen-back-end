@@ -59,12 +59,16 @@ async function list(req, res) {
     });
 }
 
+async function read(req, res) {
+    const foundObservation = res.locals['observation'];
+    res.json({ data: foundObservation });
+}
+
 async function update(req, res) {
     const updatedObs = {
-      ...req.body.data,
-      observation_id: res.locals['observation']['observation_id'],
+        ...req.body.data,
+        observation_id: res.locals['observation']['observation_id'],
     };
-  
     const data = await service.update(updatedObs);
     res.json({ data });
   }
@@ -73,6 +77,7 @@ module.exports = {
     create: [hasData, hasLatitude, hasLongitude, hasSkyCondition,
         asyncErrorBoundary(create)],
     list: asyncErrorBoundary(list),
+    read: [asyncErrorBoundary(observationExists), asyncErrorBoundary(read)],
     update: [asyncErrorBoundary(observationExists), hasData, hasLatitude,
         hasLongitude, hasSkyCondition, asyncErrorBoundary(update)],
 };

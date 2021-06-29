@@ -7,6 +7,8 @@ router.route("/")
     .get(controller.list)
     .all(methodNotAllowed);
 router.route("/:observation_id")
-    .put(controller.update);
+    .get(controller['read'])
+    .put(controller.update)
+    .all(methodNotAllowed);
 
 module.exports = router;
