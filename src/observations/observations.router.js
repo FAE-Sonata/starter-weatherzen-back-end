@@ -3,12 +3,12 @@ const controller = require("./observations.controller");
 const methodNotAllowed = require("../errors/methodNotAllowed");
 
 router.route("/")
-    .post(controller.create)
-    .get(controller.list)
+    .post(controller['create'])
+    .get(controller['list'])
     .all(methodNotAllowed);
 router.route("/:observation_id")
     .get(controller['read'])
-    .put(controller.update)
+    .put(controller['update'])
     .all(methodNotAllowed);
 
 module.exports = router;
