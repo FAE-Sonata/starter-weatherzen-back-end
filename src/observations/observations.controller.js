@@ -35,6 +35,16 @@ function hasSkyCondition(req, res, next) {
     next({status: 400, message: `sky_condition must be one of: ${validSkyConditions}`})
 }
 
+async function observationExists(req, res, next) {
+    const observation = await service.read(req.params['observation_id']);
+  
+    if (observation) {
+      res.locals['observation'] = observation;
+      return next();
+    }
+    next({ status: 404, message: `Observation cannot be found.` });
+  }
+
 async function create(req, res) {
     const newObservation = await service.create(req.body.data);
     res.status(201).json({
@@ -49,7 +59,20 @@ async function list(req, res) {
     });
 }
 
+async function update(req, res) {
+    const updatedObs = {
+      ...req.body.data,
+      observation_id: res.locals['observation']['observation_id'],
+    };
+  
+    const data = await service.update(updatedObs);
+    res.json({ data });
+  }
+
 module.exports = {
-    create: [hasData, hasLatitude, hasLongitude, hasSkyCondition, asyncErrorBoundary(create)],
+    create: [hasData, hasLatitude, hasLongitude, hasSkyCondition,
+        asyncErrorBoundary(create)],
     list: asyncErrorBoundary(list),
+    update: [asyncErrorBoundary(observationExists), hasData, hasLatitude,
+        hasLongitude, hasSkyCondition, asyncErrorBoundary(update)],
 };

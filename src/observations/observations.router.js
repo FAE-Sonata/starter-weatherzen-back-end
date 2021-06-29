@@ -6,5 +6,7 @@ router.route("/")
     .post(controller.create)
     .get(controller.list)
     .all(methodNotAllowed);
+router.route("/:observation_id")
+    .put(controller.update);
 
 module.exports = router;
